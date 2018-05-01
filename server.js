@@ -10,7 +10,9 @@ const url = process.env.MONGOLAB_URI;
 mongoose
   .connect(url)
   .then(() => console.log('\n=== connected to mongo ===\n'))
-  .catch(err => console.log('database is not connected'));
+  .catch(err =>
+    console.log('database is not connected, BUT this is simply not true')
+  );
 
 const server = express();
 
