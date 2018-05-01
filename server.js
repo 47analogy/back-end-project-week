@@ -3,11 +3,14 @@ const helmet = require('helmet');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const dotenv = require('dotenv').config();
 
-// mongoose
-//   .connect('mongodb://localhost/notesdb')
-//   .then(() => console.log('\n=== connected to mongo ===\n'))
-//   .catch(err => console.log('database is not connected'));
+const url = process.env.MONGOLAB_URI;
+
+mongoose
+  .connect(url)
+  .then(() => console.log('\n=== connected to mongo ===\n'))
+  .catch(err => console.log('database is not connected'));
 
 const server = express();
 
