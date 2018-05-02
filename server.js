@@ -9,6 +9,13 @@ const morgan = require('morgan');
 const url = process.env.MONGOLAB_URI;
 const localDB = 'mongodb://localhost/notes-db';
 
+const corsOptions = {
+  origin: '*',
+  methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
+
 mongoose
   // .connect(localDB)
   .connect(url)
@@ -25,6 +32,20 @@ server.use(cors());
 server.use(express.json());
 server.use(bodyParser.json());
 server.use(morgan('dev'));
+
+server.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'PUT, GET, POST, DELETE, OPTIONS'
+  );
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 server.get('/', (req, res) => {
   res.status(200).json({ api: 'running good' });
