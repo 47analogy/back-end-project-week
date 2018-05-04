@@ -4,7 +4,7 @@ const User = require('../models/user.js');
 
 const UserRouter = express.Router();
 
-UserRouter.post('/', (req, res) => {
+UserRouter.post('/register', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password)
     res.status(400).send({
@@ -21,10 +21,30 @@ UserRouter.post('/', (req, res) => {
     })
     .catch(err => {
       res.status(500).send({
-        error: 'There was an error while saving the User to the Database',
+        error: 'There was an error saving the user to the database',
       });
     });
 });
+
+
+
+UserRouter.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  const user = req.body;
+  User.findOne({ username }).then(user => {
+    if (user) {
+      user.isPasswordValid(password).then(isValid => {
+        if (isValid) {
+          req.session.name = user.username;
+          res.status(200).json({ sucess: true });
+        } else {
+          res.status(401).json({ sucess: false });
+        }
+      });
+    }
+  });
+});
+
 
 UserRouter.get('/', function(req, res) {
   User.find({})
@@ -33,71 +53,9 @@ UserRouter.get('/', function(req, res) {
     })
     .catch(err => {
       res.status(500).send({
-        error: 'The information could not be retrieved.',
+        error: 'Could not get Users',
       });
     });
 });
-
-// UserRouter.get("/api/Users/:id", function (req, res) {
-//     const { id } = req.params;
-//     User.findById(id)
-//         .then(foundUser => {
-//             if (!foundUser)
-//                 res.status(404).send("The User you are looking for does not exist!");
-//             else res.status(201).send(foundUser);
-//         })
-//         .catch(err => {
-//             res.status(500).send({
-//                 error: "The information could not be retrieved."
-//             });
-//         });
-// });
-
-// UserRouter.put("/api/Users/:id", function (req, res) {
-//     const { id } = req.params;
-//     const UserInfo = req.body;
-//     if (!UserInfo.species || !UserInfo.latinName) {
-//         res.status(400).send({
-//             errorMessage:
-//                 "Please provide both species and and latinName for the User."
-//         })
-//     }
-//     else {
-//         User.findByIdAndUpdate(id, UserInfo, { new: true, runValidators: true })
-//             .then(updatedUser => {
-//                 if (!updatedUser) {
-//                     res
-//                         .status(404)
-//                         .send({
-//                             errorMessage: "The User with the specified ID does not exist."
-//                         });
-//                 } else {
-//                     res.status(200).send(updatedUser);
-//                 }
-//             })
-//             .catch(err =>
-//                 res.status(500).send({ errorMessage: "There was an error updateing the User!" })
-//             );
-//     }
-// })
-
-// UserRouter.delete("/api/Users/:id", function (req, res) {
-//     const { id } = req.params;
-//     User.findByIdAndRemove(id)
-//         .then(removedUser => {
-//             if (!removedUser) {
-//                 res
-//                     .status(404)
-//                     .send({
-//                         errorMessage: "The User with the specified ID does not exist."
-//                     });
-//             } else {
-//                 res.status(200).send(removedUser);
-//             }
-//         })
-//         .catch(err =>
-//             res.status(500).send({ errorMessage: "There was an error deleting the User!" })
-//         );
-// });
 
 module.exports = UserRouter;

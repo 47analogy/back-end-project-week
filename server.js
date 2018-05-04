@@ -6,8 +6,10 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv').config();
 const morgan = require('morgan');
 
-const url = process.env.MONGOLAB_URI;
-const localDB = 'mongodb://localhost/notes-db';
+const db = process.env.MONGOLAB_URI || 'mongodb://localhost/notes-db';
+
+// const url = process.env.MONGOLAB_URI; //mlab mongo
+// const localDB = 'mongodb://localhost/notes-db'; //local mongo
 
 const corsOptions = {
   origin: '*',
@@ -18,17 +20,16 @@ const corsOptions = {
 
 mongoose
   // .connect(localDB)
-  .connect(url)
+  // .connect(url)
+  .connect(db)
   .then(() => console.log('\n=== connected to mongo ===\n'))
-  .catch(err =>
-    console.log('database is not connected, BUT this is simply not true')
-  );
+  .catch(err => console.log('database is not connected'));
 
 const userController = require('./controllers/userController');
 const server = express();
 
 server.use(helmet());
-server.use(cors());
+server.use(cors(corsOptions));
 server.use(express.json());
 server.use(bodyParser.json());
 server.use(morgan('dev'));

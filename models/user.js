@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-SALT_FACTOR = 11;
+SALT_FACTOR = 12;
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -11,8 +11,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
-    minlength: 4,
+    required: true
   },
 });
 
